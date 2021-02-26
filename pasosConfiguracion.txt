@@ -1,0 +1,53 @@
+/**
+ * Pasos a seguir para configurar el entorno de desarrollo y de
+ * producción en las prácticas de SI2.
+ *
+ * Autores:
+ * Jose Manuel Freire y Miguel Herrera
+ */
+
+Entorno Desarrollo (Máquina Virtual Ubuntu 18.04 Labs):
+- Ejecutar el script virtualip.sh para configurar la ip en 10.X.X.X:
+$> sudo sh ./virtualip.sh ens33
+
+// Comprobar que se ha asignado correctamente la ip (ens33:0)
+$> ifconfig
+
+- Configurar la variable de entorno J2EE_HOME en la terminal donde se
+ejecutará el programa:
+$> export J2EE_HOME=/opt/glassfish4/glassfish
+
+// Comprobar que se ha asignado correctamente J2EE_HOME en el sistema
+$> echo $J2EE_HOME
+
+- Comprobar que ambos entornos se comunican (ip del grupo 2391, pareja 1):
+$> ping 10.3.1.1
+
+- Configurar la variable de entorno JAVA_HOME en la terminal donde se
+ejecutaŕa el programa:
+$> export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+/* La versión 8 de JAVA (java-8-openjdk-amd64) no funciona al compilar con
+ant, ya que no existe la carpeta /lib y el compilador configura automáticamente
+la ruta a /jre. Por lo tanto, como se debe compilar con jdk es necesario
+utilizar la versión 11 de JAVA que sí tiene /lib. */
+
+- Iniciar sesión en glassfish con usuario "admin" y contraseña "adminadmin".
+La contraseña está definida en el archivo passwordfile
+
+----------------------------------------------------------------------
+
+Entorno Producción (Máquina Virtual si2srv sin interfaz gŕafica):
+- Iniciar sesión con usuario "si2" y contraseña "2021sid0s"
+
+- Iniciar el servidor glassfish:
+$> asadmin start-domain domain1
+
+Esta máquina virtual tiene asignada la ip 10.3.1.1 (configuración inicial)
+la cual se puede ver con el comando "ifconfig" en eth1.
+
+- Comprobar que ambos entornos se comunican (ip asignada con virtualip.sh):
+$> ping <ip:desarrollo>
+
+----------------------------------------------------------------------
+
