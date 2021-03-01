@@ -23,15 +23,6 @@ $> echo $J2EE_HOME
 - Comprobar que ambos entornos se comunican (ip del grupo 2391, pareja 1):
 $> ping 10.3.1.1
 
-- Configurar la variable de entorno JAVA_HOME en la terminal donde se
-ejecutaŕa el programa:
-$> export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-
-/* La versión 8 de JAVA (java-8-openjdk-amd64) no funciona al compilar con
-ant, ya que no existe la carpeta /lib y el compilador configura automáticamente
-la ruta a /jre. Por lo tanto, como se debe compilar con jdk es necesario
-utilizar la versión 11 de JAVA que sí tiene /lib. */
-
 - Iniciar sesión en glassfish con usuario "admin" y contraseña "adminadmin".
 La contraseña está definida en el archivo passwordfile
 
