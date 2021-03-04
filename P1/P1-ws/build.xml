@@ -129,7 +129,7 @@ ant limpiar-todo
   	</target>
 
 	<target name="compilar-servicio" depends="montar-jerarquia" description="Compila el servicio">
-		<javac srcdir="${src.server}" 
+		<javac srcdir="${src.server}"
 		       destdir="${build.server}/WEB-INF/classes"
  		       includeantruntime="false"
 		       includes="${paquete}/**" >

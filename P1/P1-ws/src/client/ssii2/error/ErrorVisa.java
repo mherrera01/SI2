@@ -4,7 +4,7 @@
  * Clase abstracta que representa un posible error en la validaci&oacute;n de 
  * los campos de una tarjeta 
  */
-package ssii2.visa.error;
+package ssii2.error;
 
 import ssii2.visa.TarjetaBean;
 

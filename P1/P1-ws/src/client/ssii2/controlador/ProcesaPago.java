@@ -19,13 +19,13 @@
  * no sean correcto (ej. pagos negativos) se intepretar&acute; la petici&oacute;n 
  * como un acceso no autorizado.  
  * 
- * Si los datos de la tarjeta son correcto se invoca al bean VisaDAO que encapsula
+ * Si los datos de la tarjeta son correcto se invoca al bean VisaDAOWS que encapsula
  * el servioc de pago con tarjeta. Primeramente se comprueba que se encuentra
  * autorizada, y a continuaci&oacute;n se realiza el pago.  Si la operaci&oacute;n
  * es correcto se redirige a pagoexitoso.jsp. En caso contrario, se redirige
  * al error correspondiente.
  * 
- * @see ssii2.visa.dao.VisaDAO
+ * @see ssii2.visa.VisaDAOWS
  * @see ssii2.visa.TarjetaBean
  * @see ssii2.visa.PagoBean
  */
@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import ssii2.visa.*;
-import ssii2.visa.dao.VisaDAO;
+import ssii2.visa.VisaDAOWS;
 
 /**
  *
@@ -148,7 +148,7 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-		VisaDAO dao = new VisaDAO();
+		VisaDAOWS dao = new VisaDAOWS();
 		HttpSession sesion = request.getSession(false);
 		if (sesion != null) {
 			pago = (PagoBean) sesion.getAttribute(ComienzaPago.ATTR_PAGO);

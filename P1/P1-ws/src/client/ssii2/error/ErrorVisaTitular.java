@@ -4,7 +4,7 @@
  * Clase que representa un error en el campo titular de la tarjeta
  */
 
-package ssii2.visa.error;
+package ssii2.error;
 
 import ssii2.visa.TarjetaBean;
 

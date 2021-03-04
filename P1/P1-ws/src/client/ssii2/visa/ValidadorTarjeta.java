@@ -9,12 +9,12 @@ package ssii2.visa;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import ssii2.visa.error.ErrorVisa;
-import ssii2.visa.error.ErrorVisaNumero;
-import ssii2.visa.error.ErrorVisaCVV;
-import ssii2.visa.error.ErrorVisaFechaCaducidad;
-import ssii2.visa.error.ErrorVisaFechaEmision;
-import ssii2.visa.error.ErrorVisaTitular;
+import ssii2.error.ErrorVisa;
+import ssii2.error.ErrorVisaNumero;
+import ssii2.error.ErrorVisaCVV;
+import ssii2.error.ErrorVisaFechaCaducidad;
+import ssii2.error.ErrorVisaFechaEmision;
+import ssii2.error.ErrorVisaTitular;
 
 /**
  *

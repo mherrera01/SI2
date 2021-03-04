@@ -10,7 +10,7 @@
  *
  */
 
-package ssii2.visa.dao;
+package ssii2.visa;
 import ssii2.visa.*;
 
 import java.sql.Connection;
@@ -20,11 +20,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+
 
 /**
- * @author jaime
+ * @author Miguel Herrera y Jose Manuel Freire
  */
-public class VisaDAO extends DBTester {
+//@WebService()
+//@WebMethod(exclude=true)
+//@WebParam(name = "nombreArgumento")
+public class VisaDAOWS extends DBTester {
 
     private boolean debug = false;
 
@@ -77,7 +84,7 @@ public class VisaDAO extends DBTester {
     /**
      * Constructor de la clase     
      */
-    public VisaDAO() {
+    public VisaDAOWS() {
         return;
     }
 
