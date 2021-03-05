@@ -43,8 +43,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import ssii2.visa.VisaDAOWSService; // Stub generado automáticamente
+import ssii2.visa.VisaDAOWS; // Stub generado automáticamente
 import ssii2.visa.*;
-import ssii2.visa.VisaDAOWS;
+
+import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.BindingProvider;
+
 
 /**
  *
@@ -148,7 +153,8 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-		VisaDAOWS dao = new VisaDAOWS();
+        VisaDAOWSService service = new VisaDAOWSService();
+		VisaDAOWS dao = service.getVisaDAOWSPort();
 		HttpSession sesion = request.getSession(false);
 		if (sesion != null) {
 			pago = (PagoBean) sesion.getAttribute(ComienzaPago.ATTR_PAGO);
@@ -171,7 +177,8 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-	if (! dao.realizaPago(pago)) {      
+        PagoBean pagoBean = dao.realizaPago(pago);
+	    if (pagoBean == null) {      
             enviaError(new Exception("Pago incorrecto"), request, response);
             return;
         }
@@ -195,7 +202,7 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
         tarjeta.setFechaEmision(request.getParameter(PARAM_FECHAEMISION));
         tarjeta.setFechaCaducidad(request.getParameter(PARAM_FECHACADUCIDAD));
         tarjeta.setCodigoVerificacion(request.getParameter(PARAM_CVV)); /* CVV2 */
-        return tarjeta;        
+        return tarjeta;
     }  
     
     /** 
