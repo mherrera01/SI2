@@ -210,11 +210,11 @@ public class VisaDAOWS extends DBTester {
      * @return
      */
     @WebMethod(operationName="realizaPago")
-    public synchronized boolean realizaPago(@WebParam(name="pago") PagoBean pago) {
+    public synchronized PagoBean realizaPago(@WebParam(name="pago") PagoBean pago) {
         Connection con = null;
         Statement stmt = null;
         ResultSet rs = null;
-        boolean ret = false;
+        PagoBean ret = null;
         String codRespuesta = "999"; // En principio, denegado
 
         // TODO: Utilizar en funcion de isPrepared()
@@ -224,7 +224,7 @@ public class VisaDAOWS extends DBTester {
         // Comprobar id.transaccion - si no existe,
         // es que la tarjeta no fue comprobada
         if (pago.getIdTransaccion() == null) {
-            return false;
+            return null;
         }
 
         // Registrar el pago en la base de datos
@@ -246,10 +246,10 @@ public class VisaDAOWS extends DBTester {
                pstmt.setDouble(2, pago.getImporte());
                pstmt.setString(3, pago.getIdComercio());
                pstmt.setString(4, pago.getTarjeta().getNumero());
-               ret = false;
+               ret = null;
                if (!pstmt.execute()
                        && pstmt.getUpdateCount() == 1) {
-                 ret = true;
+                 ret = pago;
                }
 
             } else {            
@@ -257,15 +257,15 @@ public class VisaDAOWS extends DBTester {
             stmt = con.createStatement();
             String insert = getQryInsertPago(pago);
             errorLog(insert);
-            ret = false;
+            ret = null;
             if (!stmt.execute(insert)
                     && stmt.getUpdateCount() == 1) {
-                ret = true;
+                ret = pago;
 			}
             }/****************/
 
             // Obtener id.autorizacion
-            if (ret) {                
+            if (ret != null) {                
 
                 /* TODO Permitir usar prepared statement si
                  * isPrepared() = true */
@@ -289,14 +289,14 @@ public class VisaDAOWS extends DBTester {
                     pago.setIdAutorizacion(String.valueOf(rs.getInt("idAutorizacion")));
                     pago.setCodRespuesta(rs.getString("codRespuesta"));
                 } else {
-                    ret = false;
+                    ret = null;
                 }
 
             }
 
         } catch (Exception e) {
             errorLog(e.toString());
-            ret = false;
+            ret = null;
         } finally {
             try {
                 if (rs != null) {
@@ -324,8 +324,7 @@ public class VisaDAOWS extends DBTester {
      * @param idComercio
      * @return
      */
-    @WebMethod(operationName="getPagos")
-    public PagoBean[] getPagos(@WebParam(name="idComercio") String idComercio) {
+    public PagoBean[] getPagos(String idComercio) {
 
         PreparedStatement pstmt = null;
         Connection pcon = null;
@@ -398,8 +397,7 @@ public class VisaDAOWS extends DBTester {
      * @param idComercio
      * @return numero de registros afectados
      */
-    @WebMethod(operationName="delPagos")
-    public int delPagos(@WebParam(name="idComercio") String idComercio) {
+    public int delPagos(String idComercio) {
 
         PreparedStatement pstmt = null;
         Connection pcon = null;
@@ -487,11 +485,25 @@ public class VisaDAOWS extends DBTester {
     /**
      * Imprime traza de depuracion
      */
-    @WebMethod(exclude=true)
     public void errorLog(String error) {
         if (isDebug())
             System.err.println("[directConnection=" + this.isDirectConnection() +"] " +
                                error);
     }
 
+    /**
+     * @return the pooled
+     */
+    @Override
+    public boolean isDirectConnection(){
+        return super.isDirectConnection();
+    }
+
+    /**
+     * @param directConnection valor de conexión directa o indirecta
+     */
+    @Override
+    public void setDirectConnection(boolean directConnection){
+        super.setDirectConnection(directConnection);
+    }
 }
