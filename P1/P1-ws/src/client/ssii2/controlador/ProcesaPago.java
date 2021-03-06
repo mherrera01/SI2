@@ -144,7 +144,8 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
                  
         TarjetaBean tarjeta = creaTarjeta(request);            
         ValidadorTarjeta val = new ValidadorTarjeta();                        
-        PagoBean pago = null; 
+        PagoBean pago = null;
+        VisaDAOWS dao = null;
         
         // printAddresses(request,response);
         if (! val.esValida(tarjeta)) {            
@@ -153,8 +154,19 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-        VisaDAOWSService service = new VisaDAOWSService();
-		VisaDAOWS dao = service.getVisaDAOWSPort();
+        try {
+            VisaDAOWSService service = new VisaDAOWSService();
+            dao = service.getVisaDAOWSPort();
+
+            BindingProvider bp = (BindingProvider) dao;
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                                       getServletContext().getInitParameter("urlServidorRemoto"));
+
+        } catch (Exception e) {
+            enviaError(e, request, response);
+            return;
+        }
+
 		HttpSession sesion = request.getSession(false);
 		if (sesion != null) {
 			pago = (PagoBean) sesion.getAttribute(ComienzaPago.ATTR_PAGO);

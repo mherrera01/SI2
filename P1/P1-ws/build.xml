@@ -84,7 +84,12 @@ ant limpiar-todo
 	</target>
         
   <target name="generar-stubs" depends="montar-jerarquia" description="Genera los stubs del cliente a partir del archivo WSDL">
-    <!-- TODO - Implementar llamada wsimport -->
+    <!-- Implementada la llamada wsimport -->
+	<exec executable="${wsimport}">
+    	<arg line="${wsimportD}"/> 
+    	<arg line="${wsimportP}"/>
+    	<arg line="${wsdl.url}"/>
+    </exec>
     <delete file="${build}/${tmpvisaclientjar}" />
     <jar jarfile="${build}/${tmpvisaclientjar}" >
   	<fileset dir="${build.client}/WEB-INF/classes" />
@@ -93,7 +98,7 @@ ant limpiar-todo
 	</target>
   
 	<target name="compilar-cliente" depends="montar-jerarquia" description="Compila el cliente">
-		<javac srcdir="${src.client}" 
+		<javac srcdir="${src.client}"
 		       destdir="${build.client}/WEB-INF/classes" 
  		       includeantruntime="false"
 		       includes="${paquete}/**" >

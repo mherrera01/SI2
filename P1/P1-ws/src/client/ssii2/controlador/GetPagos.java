@@ -13,11 +13,16 @@
 package ssii2.controlador;
 
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import ssii2.visa.PagoBean;
-import ssii2.visa.VisaDAOWS;
+import ssii2.visa.VisaDAOWSService; // Stub generado automáticamente
+import ssii2.visa.VisaDAOWS; // Stub generado automáticamente
+
+import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.BindingProvider;
 
 /**
  *
@@ -47,18 +52,31 @@ public class GetPagos extends ServletRaiz {
     */    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {        
-        
-		VisaDAOWS dao = new VisaDAOWS();
+        VisaDAOWS dao = null;
+
+		try {
+            VisaDAOWSService service = new VisaDAOWSService();
+            dao = service.getVisaDAOWSPort();
+
+            BindingProvider bp = (BindingProvider) dao;
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                                       getServletContext().getInitParameter("urlServidorRemoto"));
+
+        } catch (Exception e) {
+            enviaError(e, request, response);
+            return;
+        }
 		
-		/* Se recoge de la petici&oacute;n el par&aacute;metro idComercio*/  
+		/* Se recoge de la petici&oacute;n el par&aacute;metro idComercio*/
 		String idComercio = request.getParameter(PARAM_ID_COMERCIO);
-		
-		/* Petici&oacute;n de los pagos para el comercio */
-		PagoBean[] pagos = dao.getPagos(idComercio);        
+
+        /* Petici&oacute;n de los pagos para el comercio */
+        List<PagoBean> pagosList = dao.getPagos(idComercio);
+        PagoBean[] pagos = pagosList.toArray(new PagoBean[pagosList.size()]);
 
         request.setAttribute(ATTR_PAGOS, pagos);
         reenvia("/listapagos.jsp", request, response);
-        return;       
+        return;
     }      
     
    /** 
