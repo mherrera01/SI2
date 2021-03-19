@@ -29,9 +29,16 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
   @Resource
   private MessageDrivenContext mdc;
 
-  private static final String UPDATE_CANCELA_QRY = null;
-   // TODO : Definir UPDATE sobre la tabla pagos para poner
-   // codRespuesta a 999 dado un código de autorización
+  private static final String UPDATE_CANCELA_QRY =
+                "update pago " +
+                "set codrespuesta=999 " +
+                "where idautorizacion=? ";
+
+  private static final String FIX_SALDO_QRY =
+                "update tarjeta " +
+                "set saldo=pago.importe + saldo " +
+                "from pago " +
+                "where pago.idautorizacion=? and pago.numerotarjeta = tarjeta.numerotarjeta ";
 
 
   public VisaCancelacionJMSBean() {
@@ -44,11 +51,43 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
   // la actualización
   public void onMessage(Message inMessage) {
       TextMessage msg = null;
+      PreparedStatement pstmt = null;
+      Connection con = null;
 
       try {
           if (inMessage instanceof TextMessage) {
               msg = (TextMessage) inMessage;
               logger.info("MESSAGE BEAN: Message received: " + msg.getText());
+
+              // Obtener conexion
+              con = getConnection();
+
+              // Asignamos el código de respuesta a 999 del idautorizacion recibido en el mensaje
+              int idautorizacion = Integer.parseInt(msg.getText());
+
+              String cancela = UPDATE_CANCELA_QRY;
+              pstmt = con.prepareStatement(cancela);
+              pstmt.setInt(1, idAutorizacion);
+
+              if (pstmt.execute()
+                    || pstmt.getUpdateCount() != 1) {
+                logger.warning("ERROR al actualizar el codigo de respuesta a valor 999.\n");
+              }
+              pstmt.close();
+              pstmt = null;
+
+              // Rectificamos el saldo de la tarjeta que realizó el pago
+              String fixSaldo = FIX_SALDO_QRY;
+              pstmt = con.prepareStatement(fixSaldo);
+              pstmt.setInt(1, idAutorizacion);
+
+              if (pstmt.execute()
+                    || pstmt.getUpdateCount() != 1) {
+                logger.warning("ERROR al rectificar el saldo de la tarjeta que realizo el pago.\n");
+              }
+              pstmt.close();
+              pstmt = null;
+
           } else {
               logger.warning(
                       "Message of wrong type: "

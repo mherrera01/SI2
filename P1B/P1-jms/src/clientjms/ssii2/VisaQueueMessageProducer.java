@@ -14,7 +14,7 @@ import javax.naming.InitialContext;
 
 public class VisaQueueMessageProducer {
 
-    // TODO: Anotar los siguientes objetos para
+    // Anotamos los siguientes objetos para
     // conectar con la connection factory y con la cola
     // definidas en el enunciado
     private static ConnectionFactory connectionFactory;
