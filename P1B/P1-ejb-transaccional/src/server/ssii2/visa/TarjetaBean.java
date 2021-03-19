@@ -13,6 +13,7 @@ public class TarjetaBean {
     private String fechaEmision;
     private String fechaCaducidad;
     private String codigoVerificacion; /* CVV2 */
+    private double saldo;
 
     /**
      * Devuelve el titular de la tarjeta

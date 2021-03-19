@@ -21,6 +21,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.ejb.Stateless;
+import javax.ejb.EJBException;
 
 
 /**
@@ -74,6 +75,15 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
                     " from pago " +
                     " where idTransaccion = ?" +
                     " and idComercio = ?";
+
+    private static final String SELECT_SALDO_QRY =
+                    "select saldo from tarjeta " +
+                    "where numeroTarjeta=? ";
+
+    private static final String UPDATE_SALDO_QRY =
+                    "update tarjeta " +
+                    "set saldo=? " +
+                    "where numeroTarjeta=? ";
     /**************************************************/
 
     /**
@@ -220,6 +230,41 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
             // Obtener conexion
             con = getConnection();
 
+            // Antes de insertar el pago hay que comprobar que la tarjeta tiene el saldo suficiente
+            String saldo = SELECT_SALDO_QRY;
+            errorLog(saldo);
+            pstmt = con.prepareStatement(saldo);
+            pstmt.setString(1, pago.getTarjeta().getNumero());
+
+            // Obtenemos el saldo de la tarjeta
+            rs = pstmt.executeQuery();
+            if (rs.next()){
+                double saldo_res = rs.getDouble("saldo") - pago.getImporte();
+
+                // Comprobamos si hay suficiente saldo
+                if (saldo_res < 0){
+                    pago.setIdAutorizacion(null);
+                    return ret;
+                }
+
+                // El pago es posible, actualizamos el saldo
+                String newSaldo = UPDATE_SALDO_QRY;
+                errorLog(newSaldo);
+                pstmt = con.prepareStatement(newSaldo);
+                pstmt.setDouble(1, saldo_res);
+                pstmt.setString(2, pago.getTarjeta().getNumero());
+
+                if (!pstmt.execute()
+                        && pstmt.getUpdateCount() == 1) {
+                    ret = pago;
+                } else {
+                    throw new EJBException();
+                }
+
+            } else {
+                throw new EJBException();
+            }
+
             // Insertar en la base de datos el pago
 
             /* TODO Usar prepared statement si
@@ -300,6 +345,11 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
                 }
             } catch (SQLException e) {
             }
+        }
+
+        // En caso de error lanzar excepción EJBException
+        if (ret == null){
+            throw new EJBException();
         }
 
         return ret;

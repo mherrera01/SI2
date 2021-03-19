@@ -47,6 +47,7 @@ import ssii2.visa.*;
 
 import javax.ejb.EJB;
 import ssii2.visa.VisaDAOLocal;
+import javax.ejb.EJBException;
 
 
 /**
@@ -175,8 +176,16 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-        PagoBean pagoBean = dao.realizaPago(pago);
-	    if (pagoBean == null) {      
+        try {
+            pago = dao.realizaPago(pago);
+
+        } catch (EJBException e){
+            if (sesion != null) sesion.invalidate();
+            enviaError(new EJBException("Pago incorrecto"), request, response);
+        }
+
+	    if (pago == null) {
+            if (sesion != null) sesion.invalidate();      
             enviaError(new Exception("Pago incorrecto"), request, response);
             return;
         }
