@@ -63,7 +63,7 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
               con = getConnection();
 
               // Asignamos el código de respuesta a 999 del idautorizacion recibido en el mensaje
-              int idautorizacion = Integer.parseInt(msg.getText());
+              int idAutorizacion = Integer.parseInt(msg.getText());
 
               String cancela = UPDATE_CANCELA_QRY;
               pstmt = con.prepareStatement(cancela);

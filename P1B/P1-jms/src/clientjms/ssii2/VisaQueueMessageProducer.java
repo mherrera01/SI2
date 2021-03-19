@@ -82,7 +82,16 @@ public class VisaQueueMessageProducer {
           if (args[0].equals("-browse")) {
             browseMessages(session); 
           } else {
-            // TODO: Enviar argv[0] como mensaje de texto
+            messageProducer = session.createProducer(queue);
+            message = session.createTextMessage();
+
+            // Enviamos argv[0] como mensaje de texto
+            message.setText(args[0]);
+            messageProducer.send(message);
+
+            // Cerramos. La conexión se cierra en el finally
+            messageProducer.close();
+            session.close();
           }
         } catch (Exception e) {
             System.out.println("Excepcion : " + e.toString());
